@@ -971,6 +971,7 @@ function mod:ShowInboxGUI()
       mod.inboxGUI = tooltip
       startPage = 0
    else
+      tooltip:Hide()
       tooltip:Clear()
    end
 
