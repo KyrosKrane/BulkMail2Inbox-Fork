@@ -26,7 +26,7 @@ local lower = string.lower
 local sortFields, markTable  -- tables
 local ibIndex, ibAttachIndex, numInboxItems, inboxCash, cleanPass, cashOnly, markOnly, takeAllInProgress, invFull, filterText -- variables
 local spinnerText = { "Working   ", "Working.  ", "Working.. ", "Working..." }
-		      
+
 --[[----------------------------------------------------------------------------
 Table Handling
 ------------------------------------------------------------------------------]]
@@ -45,7 +45,7 @@ do
       end
       return t
    end
-   
+
    function del(t)
       for k in pairs(t) do
 	 t[k] = nil
@@ -81,8 +81,8 @@ end
 -- These are the patterns that indicate that the item was received from the AH
 -- In that case the items are not returnable
 local AHReceivedPatterns = {
-   (gsub(AUCTION_REMOVED_MAIL_SUBJECT, "%%s", ".*")), 
-   (gsub(AUCTION_EXPIRED_MAIL_SUBJECT, "%%s", ".*")), 
+   (gsub(AUCTION_REMOVED_MAIL_SUBJECT, "%%s", ".*")),
+   (gsub(AUCTION_EXPIRED_MAIL_SUBJECT, "%%s", ".*")),
    (gsub(AUCTION_WON_MAIL_SUBJECT, "%%s", ".*"))
 }
 
@@ -146,7 +146,7 @@ local function takeAll(cash, mark)
       mark = cash.markOnly
       cash = cash.cashOnly
    end
-   
+
    cashOnly = cash
    markOnly = mark
    ibIndex = GetInboxNumItems()
@@ -182,12 +182,12 @@ function mod:OnInitialize()
 		       },
 		       profile = {
 			  disableTooltips = false,
-			  scale = 1.0, 
+			  scale = 1.0,
 			  font = "Friz Quadrata TT",
 			  fontSize = 12
 		       }
 		    }, "Default")
-   
+
    sortFields = { 'itemLink', 'qty', 'returnable', 'sender', 'daysLeft', 'index' }
    markTable = {}
    inboxCash = 0
@@ -197,13 +197,13 @@ function mod:OnInitialize()
       type = 'group',
       args = {
 	 altdel = {
-	    name = L["Alt-click Delete"], type = 'toggle', 
+	    name = L["Alt-click Delete"], type = 'toggle',
 	    desc = L["Enable Alt-Click on inbox items to delete the mail in which they are contained."],
 	    get = function() return self.db.char.altDel end,
 	    set = function(args,v) self.db.char.altDel = v end,
 	 },
 	 ctrlret = {
-	    name = L["Ctrl-click Return"], type = 'toggle', 
+	    name = L["Ctrl-click Return"], type = 'toggle',
 	    desc = L["Enable Ctrl-click on inbox items to return the mail in which they are contained."],
 	    get = function() return self.db.char.ctrlRet end,
 	    set = function(args,v) self.db.char.ctrlRet = v end,
@@ -252,7 +252,7 @@ function mod:OnInitialize()
 	    dialogControl = "LSM30_Font",
 	    name = L["Font"],
 	    desc = L["Font used in the inbox list"],
-	    values = AceGUIWidgetLSMlists.font, 
+	    values = AceGUIWidgetLSMlists.font,
 	    set = function(_,key) mod.db.profile.font = key  mod:RefreshInboxGUI() end,
 	    get = function() return mod.db.profile.font end,
 	    order = 1000,
@@ -274,7 +274,7 @@ function mod:OnInitialize()
       self.ldb =
 	 LDB:NewDataObject("BulkMailInbox",
 			   {
-			      type =  "data source", 
+			      type =  "data source",
 			      label = L["Bulk Mail Inbox"]..VERSION,
 			      icon = [[Interface\Addons\BulkMail2Inbox\icon]],
 			      tooltiptext = color(L["Bulk Mail Inbox"]..VERSION.."\n\n", "ffff00")..color(L["Hint:"].." "..L["Left click to open the config panel."].."\n"..
@@ -418,7 +418,7 @@ function mod:TakeNextItemFromMailbox()
 	 return self:SmartScheduleTimer('BMI_takeAll', true, takeAll, .1, { cashOnly = cashOnly, markOnly = markOnly })
       end
    end
-   
+
    local curIndex, curAttachIndex = ibIndex, ibAttachIndex
    local sender, subject, money, cod, daysLeft, item, _, _, text, _, isGM = select(3, GetInboxHeaderInfo(curIndex))
 
@@ -437,7 +437,7 @@ function mod:TakeNextItemFromMailbox()
    local itemName, _, _, itemCount = GetInboxItem(curIndex, curAttachIndex)
    local markKey = daysLeft..subject..curAttachIndex
 
-   if (sender == "The Postmaster" or sender == "Thaumaturge Vashreen") and not itemName and money == 0 and not item then 
+   if (sender == "The Postmaster" or sender == "Thaumaturge Vashreen") and not itemName and money == 0 and not item then
       DeleteInboxItem(curIndex)
       self:SmartScheduleTimer('BMI_RefreshInboxGUI', false, "RefreshInboxGUI", 1)
       self:SmartScheduleTimer('BMI_TakeNextItem', true, "TakeNextItemFromMailbox", 0.4)
@@ -448,8 +448,8 @@ function mod:TakeNextItemFromMailbox()
    then
       return self:TakeNextItemFromMailbox()
    end
-   local actionTaken 
-   if not string.find(subject, "Sale Pending") then 
+   local actionTaken
+   if not string.find(subject, "Sale Pending") then
       if curAttachIndex == 0 and money > 0 then
 	 local _, itemName = GetInboxInvoiceInfo(curIndex)
 	 local title = itemName and ITEM_SOLD_COLON..' '..itemName or L["Cash"]
@@ -469,7 +469,7 @@ function mod:TakeNextItemFromMailbox()
 	    markTable[markKey] = nil
 	    actionTaken = true
 	 end
-      end      
+      end
    end
 
    if actionTaken then
@@ -490,7 +490,7 @@ function mod:SetInboxItem(tooltip, index, attachment, ...)
    if takeAllInProgress then return end
    local money, _, _, _, _, wasReturned, _, canReply = select(5, GetInboxHeaderInfo(index))
    if self.db.char.shiftTake then tooltip:AddLine(L["Shift - Take Item"]) end
-   if wasReturned then 
+   if wasReturned then
       if self.db.char.altDel then
 	 tooltip:AddLine(L["Alt - Delete Containing Mail"])
       end
@@ -612,7 +612,7 @@ function mod:HideInboxGUI()
    mod:SmartCancelTimer('BMI_takeAll')
    mod:SmartCancelTimer('BMI_TakeNextItem')
    mod:SmartCancelTimer('BMI_RefreshInboxGUI')
-   
+
    if mod._toolbar then
       mod._toolbar:Hide()
       mod._toolbar:SetParent(nil)
@@ -685,12 +685,12 @@ local function _onEnterFunc(frame, info)  -- contributed by bigzero
       GameTooltip:AddLine(ENCLOSED_MONEY, "", 1, 1, 1)
       SetTooltipMoney(GameTooltip, info.money)
       SetMoneyFrameColor('GameTooltipMoneyFrame', HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
-   end 
+   end
    if (info.cod or 0) > 0 then
       GameTooltip:AddLine(COD_AMOUNT, "", 1, 1, 1)
       SetTooltipMoney(GameTooltip, info.cod)
       SetMoneyFrameColor('GameTooltipMoneyFrame', HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b)
-   end 
+   end
    GameTooltip:Show()
    frame:SetScript("OnKeyDown", _toggleCompareItem)
    frame:SetScript("OnKeyUp", _toggleCompareItem)
@@ -699,7 +699,7 @@ end
 local function _createButton(title, parent, onclick, anchorTo, xoffset, tooltipHeader, tooltipText)
    local buttons = mod.buttons or {}
    mod.buttons = buttons
-   
+
    local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
    button:SetText(title)
    button:SetWidth(25)
@@ -721,7 +721,7 @@ local function _createOrAttachSearchBar(tooltip)
       closeButton:SetPoint("TOPRIGHT", toolbar, "TOPRIGHT", 0, 0)
       closeButton:SetScript("OnClick", function() mod:HideInboxGUI() end)
       _addTooltipToFrame(closeButton, L["Close"], L["Close the window and stop taking items from the inbox."])
-      
+
       local nextButton = CreateFrame("Button", nil, toolbar)
       nextButton:SetNormalTexture([[Interface\Buttons\UI-SpellbookIcon-NextPage-Up]])
       nextButton:SetPushedTexture([[Interface\Buttons\UI-SpellbookIcon-NextPage-Down]])
@@ -732,7 +732,7 @@ local function _createOrAttachSearchBar(tooltip)
       nextButton:SetWidth(25)
       nextButton:SetHeight(25)
       _addTooltipToFrame(nextButton, L["Next Page"], L["Go to the next page of items."])
-      
+
       local prevButton = CreateFrame("Button", nil, toolbar)
       prevButton:SetNormalTexture([[Interface\Buttons\UI-SpellbookIcon-PrevPage-Up]])
       prevButton:SetPushedTexture([[Interface\Buttons\UI-SpellbookIcon-PrevPage-Down]])
@@ -743,7 +743,7 @@ local function _createOrAttachSearchBar(tooltip)
       prevButton:SetWidth(25)
       prevButton:SetHeight(25)
       _addTooltipToFrame(prevButton, L["Previous Page"], L["Go to the previous page of items."])
-      
+
       local pageText = toolbar:CreateFontString(nil, nil, "GameFontNormalSmall")
       pageText:SetTextColor(1,210/255.0,0,1)
       pageText:SetPoint("RIGHT", prevButton, "LEFT", 0, 0)
@@ -757,7 +757,7 @@ local function _createOrAttachSearchBar(tooltip)
       itemText:SetJustifyH("LEFT")
       toolbar.itemText = itemText
 
-      
+
       button = _createButton("CS", toolbar, function() wipe(markTable) self:RefreshInboxGUI() end, closeButton, -2,
 			     L["Clear Selected"], L["Clear the list of selected items."])
       button = _createButton("TS", toolbar, function() takeAll(false, true) end, button, -2,
@@ -765,7 +765,7 @@ local function _createOrAttachSearchBar(tooltip)
       button = _createButton("TC", toolbar, function() takeAll(true) end, button, -2,
 			     L["Take Cash"], L["Take all money from the mailbox. If the search filter is used,\nmoney will only be taken from mails which the search term."])
       button = _createButton("TA", toolbar, function() takeAll() end, button, -2,
-			     L["Take All"], L["Take all items from the mailbox. If the search filter is used,\nonly items matching the search term will be taken."])      
+			     L["Take All"], L["Take all items from the mailbox. If the search filter is used,\nonly items matching the search term will be taken."])
 
       mod.buttons.prev = prevButton
       mod.buttons.next = nextButton
@@ -785,10 +785,10 @@ local function _createOrAttachSearchBar(tooltip)
 			   wipe(markTable)
 			   mod:RefreshInboxGUI()
 			end)
-      
+
       editBox:SetScript("OnEscapePressed", editBox.ClearFocus)
       editBox:SetScript("OnEnterPressed", editBox.ClearFocus)
-      
+
       editBox:SetAutoFocus(false)
       editBox:SetPoint("RIGHT", button, "LEFT", -10, 0)
       _addTooltipToFrame(editBox, L["Search"], L["Filter the inbox display to items matching the term entered here.\nTake All and Take Cash actions are limited to items matching the inbox filter."])
@@ -813,7 +813,7 @@ local function _createOrAttachSearchBar(tooltip)
       cancelButton:SetScript("OnClick", function(self) takeAllInProgress = nil end)
       _addTooltipToFrame(cancelButton, L["Cancel"], L["Cancel taking items from the inbox."])
       mod.buttons.Cancel = cancelButton
-      
+
       local titleText = toolbar:CreateFontString(nil, nil, "GameTooltipHeaderText")
       titleText:SetTextColor(1,210/255.0,0,1)
       titleText:SetText(L["Bulk Mail Inbox"])
@@ -821,12 +821,12 @@ local function _createOrAttachSearchBar(tooltip)
       titleText:SetPoint("BOTTOMRIGHT", text, "BOTTOMLEFT", -5, 0)
       titleText:SetPoint("LEFT", toolbar, "LEFT", 5, 0)
       toolbar.titleText = titleText
-      
+
       local backdrop = GameTooltip:GetBackdrop()
-      
+
 
       toolbar:SetBackdrop(backdrop)
-   
+
       if backdrop then
 	 toolbar:SetBackdropColor(GameTooltip:GetBackdropColor())
 	 toolbar:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
@@ -840,16 +840,16 @@ local function _createOrAttachSearchBar(tooltip)
 
    toolbar:SetScript("OnDragStart", function() tooltip:StartMoving() end)
    toolbar:SetScript("OnDragStop", function() tooltip.moved = true tooltip:StopMovingOrSizing() end)
-   
+
    toolbar:ClearAllPoints()
    toolbar:SetParent(tooltip)
-   
+
    toolbar:SetPoint("BOTTOMLEFT", tooltip, "TOPLEFT", 0, -4)
    toolbar:SetPoint("BOTTOMRIGHT", tooltip, "TOPRIGHT", 0, -4)
 
    toolbar:Show()
 end
-      
+
 
 
 -- This adds the header info, and next prev buttons if needed
@@ -857,13 +857,13 @@ local function _addHeaderAndNavigation(tooltip, totalRows, firstRow, lastRow)
    mod._toolbar.itemText:SetText(fmt(L["Inbox Items (%d mails, %s)"], GetInboxNumItems(), abacus:FormatMoneyShort(inboxCash)))
    if firstRow and lastRow then
       mod._toolbar.pageText:SetText(fmt(L["Item %d-%d of %d"], firstRow, lastRow, totalRows))
-	 
+
       if startPage > 0 then
 	 mod.buttons.prev:Enable()
       else
 	 mod.buttons.prev:Disable()
       end
-      
+
       if lastRow < totalRows then
 	 mod.buttons.next:Enable()
       else
@@ -878,7 +878,7 @@ local function _addHeaderAndNavigation(tooltip, totalRows, firstRow, lastRow)
 	 mod._toolbar.pageText:SetText("")
       end
    end
-   
+
    local sel = function(str, col)
       return color(str, col == mod.db.char.sortField and "ffff7f" or "ffffff")
    end
@@ -892,7 +892,7 @@ local function _addHeaderAndNavigation(tooltip, totalRows, firstRow, lastRow)
       end
       self:RefreshInboxGUI()
    end
-   for i = 1,6 do 
+   for i = 1,6 do
       tooltip:SetCellScript(y, i+1, "OnMouseUp", setSortFieldFunc, i)
    end
    tooltip:AddSeparator(2)
@@ -901,7 +901,7 @@ end
 function mod:AdjustSizeAndPosition(tooltip)
 
    local scale = mod.db.profile.scale
-   
+
    tooltip:SetScale(scale)
    if not tooltip.moved then
       -- this is needed to get the correct height for some reason.
@@ -927,7 +927,7 @@ end
 local function _updateButtonStates(tooltip)
    local hasMarked = next(markTable)
    local markColor = hasMarked and "ffd200" or "7f7f7f"
-   
+
    if hasMarked then
       mod.buttons.CS:Enable()
       mod.buttons.TS:Enable()
@@ -940,7 +940,7 @@ local function _updateButtonStates(tooltip)
    else
       mod.buttons.TC:Disable()
    end
-  
+
    mod.cells.takeSelected = _addColspanCell(tooltip, color(L["Take Selected"], markColor), 2, hasMarked and function() takeAll(false, true) end, nil, mod.cells.takeSelected)
    mod.cells.clearSelected = _addColspanCell(tooltip, color(L["Clear Selected"], markColor), 2, hasMarked and function() wipe(markTable) self:RefreshInboxGUI() end, nil, mod.cells.clearSelected)
 
@@ -948,7 +948,7 @@ local function _updateButtonStates(tooltip)
    mod:AdjustSizeAndPosition(tooltip)
 end
 
-      
+
 function mod:ShowInboxGUI()
    if not mod.db.char.inboxUI then return end
    if not inboxCache or not next(inboxCache) then
@@ -971,11 +971,11 @@ function mod:ShowInboxGUI()
       mod.inboxGUI = tooltip
       startPage = 0
    else
-      tooltip:Clear()      
+      tooltip:Clear()
    end
 
    local y
-   
+
    local fontName = media:Fetch("font", mod.db.profile.font)
 
    local font = mod.font or CreateFont("BulkMailInboxFont")
@@ -1014,21 +1014,21 @@ function mod:ShowInboxGUI()
 	 if info.texture then
 	    itemText = fmt("|T%s:18|t%s", info.texture, itemText)
 	 end
-	 y = tooltip:AddLine("", 
+	 y = tooltip:AddLine("",
 			     itemText,
-			     markedColor(info.money and abacus:FormatMoneyFull(info.money) or info.qty, 2), 
-			     markedColor(info.returnable and L["Yes"] or L["No"], 3), 
-			     markedColor(info.sender, 4), 
-			     markedColor(fmt("%0.1f", info.daysLeft), 5), 
+			     markedColor(info.money and abacus:FormatMoneyFull(info.money) or info.qty, 2),
+			     markedColor(info.returnable and L["Yes"] or L["No"], 3),
+			     markedColor(info.sender, 4),
+			     markedColor(fmt("%0.1f", info.daysLeft), 5),
 			     markedColor(info.index, 6))
 	 if isMarked then
 	    tooltip:SetLineColor(y, 1, 1, 1, 0.3)
 	 end
 	 tooltip:SetCell(y, 1, isMarked and [[|TInterface\Buttons\UI-CheckBox-Check:18|t]] or " ", nil,  "RIGHT", 1, nil, 0, 0, mod.db.profile.fontSize + 3, mod.db.profile.fontSize + 3)
-	 
+
 	 tooltip:SetLineScript(y, "OnMouseUp", function(frame, line)
 						  if not IsModifierKeyDown() then
-						     if info.bmid then 
+						     if info.bmid then
 							markTable[info.bmid] = not markTable[info.bmid] and true or nil
 							tooltip:SetCell(line, 1, markTable[info.bmid] and [[|TInterface\Buttons\UI-CheckBox-Check:18|t]] or " ", nil,  "RIGHT", 1, nil, 0, 0, 15, 15)
 							if markTable[info.bmid] then
@@ -1067,7 +1067,7 @@ function mod:ShowInboxGUI()
    tooltip:SetFrameStrata("FULLSCREEN")
    -- set max height to be 80% of the screen height
    mod:AdjustSizeAndPosition(tooltip)
-   
+
    tooltip:Show()
 end
 
@@ -1085,7 +1085,7 @@ function mod:OptReg(optname, tbl, cmd)
    return regtable
 end
 function mod:OpenConfigMenu(parentframe)
-   -- create the menu   
+   -- create the menu
    local frame = LD:OpenAce3Menu(mod.opts)
 
    -- Anchor the menu to the mouse
