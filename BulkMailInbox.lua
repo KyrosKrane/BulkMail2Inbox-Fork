@@ -918,14 +918,41 @@ function mod:AdjustSizeAndPosition(tooltip)
       local tipHeight = tooltip:GetHeight() * scale
       tooltip:ClearAllPoints()
 
-	  -- with some addons, it is possible to open the mailbox but not have a visible mail frame
-      if MailFrame:IsVisible() then
-		  -- Calculate a good offset
-		  local offx = math.min((uiHeight - tipHeight - barHeight)/2, uiHeight + 12 - MailFrame:GetTop()*MailFrame:GetScale())+barHeight
-		  tooltip:SetPoint("TOPLEFT", UIParent, "TOPLEFT", MailFrame:GetRight()*MailFrame:GetScale()/scale, -offx/scale)
-      else
-		  tooltip:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
-	  end
+--	  print("--------------------------------------------------------------------")
+--	  print("uiHeight is " .. (uiHeight or "*nil*"))
+--	  print("tipHeight is " .. (tipHeight or "*nil*"))
+--	  print("barHeight is " .. (barHeight or "*nil*"))
+--	  print("MailFrame:GetTop() is " .. (MailFrame:GetTop() or "*nil*"))
+--	  print("MailFrame:GetScale() is " .. (MailFrame:GetScale() or "*nil*"))
+--	  print("MailFrame:GetRight() is " .. (MailFrame:GetRight() or "*nil*"))
+--	  print("scale is " .. (scale or "*nil*"))
+
+	  -- With some addons, it is possible to open the mailbox but not have a visible mail frame
+	  -- Use some sane defaults if the mail frame isn't loaded.
+	  local MailFrameTop, MailFrameRight, MailFrameScale
+
+	  MailFrameTop = MailFrame:GetTop() or 100
+	  MailFrameRight = MailFrame:GetRight() or 600
+	  MailFrameScale = MailFrame:GetScale() or 1
+--	  print("MailFrameTop is " .. (MailFrameTop or "*nil*"))
+--	  print("MailFrameRight is " .. (MailFrameRight or "*nil*"))
+--	  print("MailFrameScale is " .. (MailFrameScale or "*nil*"))
+
+	  local FactorOne = (uiHeight - tipHeight - barHeight)/2
+	  local FactorTwo = uiHeight + 12 - MailFrameTop*MailFrameScale
+--	  print("FactorOne is " .. (FactorOne or "*nil*"))
+--	  print("FactorTwo is " .. (FactorTwo or "*nil*"))
+
+	  -- Calculate a good offset
+	  local offx = math.min(FactorOne, FactorTwo)+barHeight
+	  local XOffset = MailFrameRight*MailFrameScale/scale
+	  --local YOffset = -offx/scale
+	  local YOffset = -MailFrameTop
+--	  print("offx is " .. (offx or "*nil*"))
+--	  print("XOffset is " .. (XOffset or "*nil*"))
+--	  print("YOffset is " .. (YOffset or "*nil*"))
+
+	  tooltip:SetPoint("TOPLEFT", UIParent, "TOPLEFT", XOffset, YOffset)
 
    end
 end
