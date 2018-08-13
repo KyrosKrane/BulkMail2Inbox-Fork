@@ -917,9 +917,16 @@ function mod:AdjustSizeAndPosition(tooltip)
    if not tooltip.moved then
       local tipHeight = tooltip:GetHeight() * scale
       tooltip:ClearAllPoints()
-      -- Calculate a good offset
-      local offx = math.min((uiHeight - tipHeight - barHeight)/2, uiHeight + 12 - MailFrame:GetTop()*MailFrame:GetScale())+barHeight
-      tooltip:SetPoint("TOPLEFT", UIParent, "TOPLEFT", MailFrame:GetRight()*MailFrame:GetScale()/scale, -offx/scale)
+
+	  -- with some addons, it is possible to open the mailbox but not have a visible mail frame
+      if MailFrame:IsVisible() then
+		  -- Calculate a good offset
+		  local offx = math.min((uiHeight - tipHeight - barHeight)/2, uiHeight + 12 - MailFrame:GetTop()*MailFrame:GetScale())+barHeight
+		  tooltip:SetPoint("TOPLEFT", UIParent, "TOPLEFT", MailFrame:GetRight()*MailFrame:GetScale()/scale, -offx/scale)
+      else
+		  tooltip:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0)
+	  end
+
    end
 end
 
